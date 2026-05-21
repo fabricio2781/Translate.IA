@@ -1,4 +1,4 @@
-# Translate.IA
+# Translatebot.IA
 Instalar Bibliotecas: pip install flask groq python-dotenv
 
 caminho: cd "C:\Users\fabri\OneDrive\Desktop\Projeto Chat Bot\BackEnd"
