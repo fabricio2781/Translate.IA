@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>TranslatebotIA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='img/icone.png') }}">
+</head>
+<body>
+
+    <div class="app">
+        <aside class="sidebar">
+            <div class="profile">
+                <div class="avatar">FB</div>
+                <div>
+                    <h2>Fabrício</h2>
+                    <p>Aluno</p>
+                </div>
+            </div>
+            <button class="new-chat">+ Nova conversa</button>
+            <div class="Sobre">
+                <a href="{{ url_for('sobre') }}" class="session-item">Sobre</a>
+            </div>
+        </aside>
+        <main class="chat-panel">
+            <div class="header">
+                <div>
+                    <h1>Professor IA</h1>
+                    <p>Tradução, correção e prática de idiomas</p>
+                </div>
+                <a href="{{ url_for('logout') }}" class="logout-btn">Sair</a>
+            </div>
+            <div id="chat" class="chat-box"></div>
+            <div class="input-area">
+                <input type="text" id="msg" placeholder="Digite sua mensagem...">
+                <button id="btn">Enviar</button>
+            </div>
+        </main>
+    </div>
+    <script>
+        let areaChat = document.getElementById("chat");
+        let campoMensagem = document.getElementById("msg");
+        let botaoEnviar = document.getElementById("btn");
+        function mostrarMensagem(texto, tipo) {
+            let novaMensagem = document.createElement("div");
+            novaMensagem.className = "mensagem " + tipo;
+            novaMensagem.textContent = texto;
+            areaChat.appendChild(novaMensagem);
+            areaChat.scrollTop = areaChat.scrollHeight;
+        }
+        function mensagemInicial() {
+            mostrarMensagem("Olá! Seja bem-vindo ao Professor IA. Como posso te ajudar hoje?", "bot");
+        }
+        async function enviarMensagem() {
+            let textoDigitado = campoMensagem.value.trim();
+
+            if (textoDigitado === "") {
+                return;
+            }
+            mostrarMensagem(textoDigitado, "user");
+            campoMensagem.value = "";
+            try {
+                let resposta = await fetch("/api/chat", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        message: textoDigitado
+                    })
+                });
+                let dados = await resposta.json();
+                mostrarMensagem(dados.reply, "bot");
+            } catch (erro) {
+                mostrarMensagem("Erro ao se comunicar com o servidor.", "bot");
+            }
+        }
+        mensagemInicial();
+        botaoEnviar.onclick = function() {
+            enviarMensagem();
+        };
+        campoMensagem.addEventListener("keydown", function(evento) {
+            if (evento.key === "Enter") {
+                evento.preventDefault();
+                enviarMensagem();
+            }
+        });
+    </script>
+</body>
+</html>
