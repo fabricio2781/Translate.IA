@@ -30,7 +30,7 @@ def login():
     return render_template("index.html")
 
 
-#  CHAT (protegido)
+#rotas
 @app.route("/chat")
 def chat_page():
     if not session.get("logado"):
@@ -44,22 +44,16 @@ def sobre():
         return redirect(url_for("login"))
     return render_template("sobre.html")
 
-
-
 # LOGOUT
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect(url_for("login"))
-
-
-# API CHAT
 @app.route("/api/chat", methods=["POST"])
 def api_chat():
     try:
         if not session.get("logado"):
-            return jsonify({"reply": "Não autorizado"}), 403
-
+         return jsonify({"reply": "Não autorizado"}), 403
         data = request.get_json()
         msg = data["message"]
 
